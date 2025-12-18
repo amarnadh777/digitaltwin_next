@@ -1,20 +1,23 @@
 'use client';
+
 import dynamic from 'next/dynamic';
+import { useRef } from 'react';
 
 const Scene = dynamic(() => import('./Scene'), { ssr: false });
 
 export default function ThreeCanvas() {
+  const controlsRef = useRef(null);
+
   return (
     <div
+      className="absolute inset-0"
       style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 0,
-        pointerEvents: 'none', // 🔑 REQUIRED
-        background: 'radial-gradient(circle, #202025 0%, #111 100%)'
+        background: 'radial-gradient(circle, #202025 0%, #111 100%)',
+        pointerEvents: 'auto',
+        zIndex: 0
       }}
     >
-      <Scene />
+      <Scene controlsRef={controlsRef} />
     </div>
   );
 }
