@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
 export default function Model() {
-  const { scene, error } = useGLTF('/models/van.glb');
+  const { scene, error } = useGLTF('/models/basic.glb');
   const { camera } = useThree();
   const [loading, setLoading] = useState(true);
 useEffect(() => {
@@ -42,4 +42,4 @@ useEffect(() => {
   return <primitive object={scene} />;
 }
 
-useGLTF.preload('/models/van.glb');
+useGLTF.preload('/models/basic.glb');
