@@ -5,9 +5,11 @@ import { useRef } from 'react';
 
 const Scene = dynamic(() => import('./Scene'), { ssr: false });
 
-export default function ThreeCanvas() {
+export default function ThreeCanvas({ highlightColor }) {
   const controlsRef = useRef(null);
 
+
+ 
   return (
     <div
       className="absolute inset-0"
@@ -17,7 +19,7 @@ export default function ThreeCanvas() {
         zIndex: 0
       }}
     >
-      <Scene controlsRef={controlsRef} />
+      <Scene controlsRef={controlsRef}  highlightColor={highlightColor} />
     </div>
   );
 }

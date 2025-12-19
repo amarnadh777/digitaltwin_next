@@ -1,45 +1,49 @@
-// Model.js - Updated with error handling
 'use client';
 
 import { useGLTF } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import * as THREE from 'three';
 
-export default function Model() {
-  const { scene, error } = useGLTF('/models/basic.glb');
+export default function Model({ highlightColor }) {
+  const { scene, error } = useGLTF('/models/bike.glb');
   const { camera } = useThree();
-  const [loading, setLoading] = useState(true);
-useEffect(() => {
-  if (!scene || error) return;
 
-  const box = new THREE.Box3().setFromObject(scene);
-  const size = box.getSize(new THREE.Vector3());
-  const center = box.getCenter(new THREE.Vector3());
+  useEffect(() => {
+    if (!scene || error) return;
 
-  // Center model
-  scene.position.sub(center);
+    // Camera fit (run once, but safe to keep here)
+    const box = new THREE.Box3().setFromObject(scene);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
 
-  const maxDim = Math.max(size.x, size.y, size.z);
-  const fov = camera.fov * (Math.PI / 180);
+    scene.position.sub(center);
 
-  // Correct distance calculation
-  let cameraZ = maxDim / Math.tan(fov / 2);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const fov = camera.fov * (Math.PI / 180);
+    let cameraZ = maxDim / Math.tan(fov / 2);
 
-  cameraZ *= 1.5; // ✅ sweet spot (1.3–1.8)
+    cameraZ *= 1.5;
 
-  camera.position.set(0, maxDim * 0.5, cameraZ);
-  camera.lookAt(0, 0, 0);
-  camera.updateProjectionMatrix();
-}, [scene, camera, error]);
+    camera.position.set(0, maxDim * 0.5, cameraZ);
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
 
+    // 🔑 APPLY COLOR FROM PARAM
+    scene.traverse((child) => {
+      if (child.isMesh && child.name === 'Object_2') {
+        child.material = child.material.clone();
+        child.material.color.set(highlightColor);
+      }
+    });
 
-  if (error) {
-    console.log('Model error:', error);
-    return null;
-  }
+    console.log('Applied highlight color:', highlightColor);
+  }, [scene, camera, error, highlightColor]); // 🔴 highlightColor added
+
+  if (error) return null;
 
   return <primitive object={scene} />;
 }
 
-useGLTF.preload('/models/basic.glb');
+useGLTF.preload('/models/bike.glb');
+9

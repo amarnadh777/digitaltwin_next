@@ -5,7 +5,9 @@ import { OrbitControls, ContactShadows, Environment } from '@react-three/drei';
 import { Suspense } from 'react';
 import Model from './Model';
 
-export default function Scene({ controlsRef }) {
+export default function Scene({ controlsRef  ,  highlightColor }) {
+
+  
   return (
     <Canvas shadows camera={{ fov: 50 }}>
       <ambientLight intensity={0.5} />
@@ -13,7 +15,7 @@ export default function Scene({ controlsRef }) {
       <pointLight position={[-10, -10, -10]} />
 
       <Suspense fallback={null}>
-        <Model />
+        <Model highlightColor={highlightColor}/>
         <ContactShadows
           position={[0, -1, 0]}
           opacity={0.4}

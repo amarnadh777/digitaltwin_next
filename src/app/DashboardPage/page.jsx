@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   LineChart, Line, AreaChart, Area, XAxis, YAxis, 
   ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Tooltip 
@@ -9,6 +9,8 @@ import {
   ShieldCheck, LayoutGrid, ArrowUpRight, TrendingUp 
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+
+
 
 const ThreeCanvas = dynamic(() => import('../../components/ThreeCanvas'), { ssr: false });
 
@@ -28,6 +30,8 @@ const barData = [
   { name: 'T', val: 90 }, { name: 'F', val: 60 }, { name: 'S', val: 30 },
 ];
 
+
+
 // --- STYLED COMPONENTS ---
 
 const PanelCard = ({ children, className = "" }) => (
@@ -35,6 +39,7 @@ const PanelCard = ({ children, className = "" }) => (
     {children}
   </div>
 );
+
 
 const MiniStatCard = ({ title, value, subValue, trend, icon: Icon, colorClass }) => (
   <PanelCard className="p-5">
@@ -67,13 +72,14 @@ const GlowingBar = ({ label, value, color }) => (
 );
 
 export default function BeautifulDashboard() {
+
+  const [highlightColor, setHighlightColor] = useState('#ff0000');
   return (
     <div className="relative w-screen h-screen bg-[#050505] overflow-hidden font-sans text-slate-200">
       {/* 3D BACKGROUND LAYER */}
       <div className="absolute inset-0 z-0">
-        <ThreeCanvas />
+        <ThreeCanvas highlightColor={highlightColor} />
       </div>
-
       {/* UI OVERLAY */}
       <div className="relative z-10 h-full flex flex-row p-8 pointer-events-none">
         
@@ -107,6 +113,38 @@ export default function BeautifulDashboard() {
               <GlowingBar label="Active Nodes" value={45} color="#06b6d4" />
             </div>
           </PanelCard>
+
+{/* COLOR CONTROLS */}
+<PanelCard className="p-5 pointer-events-auto">
+  <h3 className="text-[10px] uppercase tracking-widest text-slate-400 mb-4">
+    Bike Color
+  </h3>
+
+  <div className="flex gap-3">
+    <button
+      onClick={() => setHighlightColor('#ef4444')}
+      className="w-6 h-6 rounded-full bg-red-500 ring-2 ring-white/20"
+    />
+
+    <button
+      onClick={() => setHighlightColor('#22c55e')}
+      className="w-6 h-6 rounded-full bg-green-500 ring-2 ring-white/20"
+    />
+
+    <button
+      onClick={() => setHighlightColor('#3b82f6')}
+      className="w-6 h-6 rounded-full bg-blue-500 ring-2 ring-white/20"
+    />
+
+    <button
+      onClick={() => setHighlightColor('#facc15')}
+      className="w-6 h-6 rounded-full bg-yellow-400 ring-2 ring-white/20"
+    />
+  </div>
+</PanelCard>
+
+
+
 
           {/* LOGS MODULE */}
           <PanelCard className="flex-1 p-6 relative">
