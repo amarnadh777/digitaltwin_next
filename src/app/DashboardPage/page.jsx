@@ -125,7 +125,7 @@ export default function BeautifulDashboard() {
     onClick={() => {
       // clear then re-set so clicking the same target repeatedly works
       setFocusPart(null);
-      setTimeout(() => setFocusPart('building007'), 50);
+      setTimeout(() => setFocusPart('solar003'), 50);
     }}
     className="w-full py-2 rounded-xl bg-cyan-500/20 border border-cyan-400/40
                text-cyan-300 text-xs font-bold tracking-widest
