@@ -9,7 +9,7 @@ import {
   ShieldCheck, LayoutGrid, ArrowUpRight, TrendingUp 
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-
+import { useFocus } from '@/context/FocusContext';
 
 
 const ThreeCanvas = dynamic(() => import('../../components/ThreeCanvas'), { ssr: false });
@@ -74,6 +74,8 @@ const GlowingBar = ({ label, value, color }) => (
 export default function BeautifulDashboard() {
 
   const [highlightColor, setHighlightColor] = useState('#ff0000');
+
+  const { setFocusPart } = useFocus();
   return (
     <div className="relative w-screen h-screen bg-[#050505] overflow-hidden font-sans text-slate-200">
       {/* 3D BACKGROUND LAYER */}
@@ -113,6 +115,30 @@ export default function BeautifulDashboard() {
               <GlowingBar label="Active Nodes" value={45} color="#06b6d4" />
             </div>
           </PanelCard>
+{/* FOCUS CONTROLS */}
+<PanelCard className="p-5 pointer-events-auto">
+  <h3 className="text-[10px] uppercase tracking-widest text-slate-400 mb-4">
+    Camera Focus
+  </h3>
+
+  <button
+    onClick={() => {
+      // clear then re-set so clicking the same target repeatedly works
+      setFocusPart(null);
+      setTimeout(() => setFocusPart('building007'), 50);
+    }}
+    className="w-full py-2 rounded-xl bg-cyan-500/20 border border-cyan-400/40
+               text-cyan-300 text-xs font-bold tracking-widest
+               hover:bg-cyan-500/30 transition"
+  >
+    FOCUS GLASS MODULE
+  </button>
+</PanelCard>
+
+
+
+
+
 
 {/* COLOR CONTROLS */}
 <PanelCard className="p-5 pointer-events-auto">

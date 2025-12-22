@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import Sidebar from "@/components/Sidebar"; 
+import Sidebar from "@/components/Sidebar";
+import { FocusProvider } from "@/context/FocusContext"; // ✅ ADD THIS
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -13,22 +14,23 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* 1. Added overflow-x-hidden to body to catch any leaks */}
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white overflow-x-hidden`}>
-        
-        {/* 2. Ensured the flex container is exactly screen width */}
-        <div className="flex h-screen w-full max-w-full overflow-hidden">
-          
-          {/* PERSISTENT LEFT SIDEBAR */}
-          <Sidebar />
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white overflow-x-hidden`}
+      >
+        {/* ✅ CONTEXT PROVIDER WRAPS THE APP */}
+        <FocusProvider>
+          <div className="flex h-screen w-full max-w-full overflow-hidden">
+            
+            {/* LEFT SIDEBAR */}
+            <Sidebar />
 
-          {/* MAIN PAGE CONTENT */}
-          {/* 3. Added min-w-0 to allow the container to shrink/stay inside flex bounds */}
-          <main className="flex-1 relative overflow-y-auto overflow-x-hidden bg-[#050505] min-w-0">
-             {children}
-          </main>
+            {/* MAIN CONTENT */}
+            <main className="flex-1 relative overflow-y-auto overflow-x-hidden bg-[#050505] min-w-0">
+              {children}
+            </main>
 
-        </div>
+          </div>
+        </FocusProvider>
       </body>
     </html>
   );

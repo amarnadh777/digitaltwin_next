@@ -8,18 +8,12 @@ const Scene = dynamic(() => import('./Scene'), { ssr: false });
 export default function ThreeCanvas({ highlightColor }) {
   const controlsRef = useRef(null);
 
-
- 
   return (
-    <div
-      className="absolute inset-0"
-      style={{
-        background: 'radial-gradient(circle, #202025 0%, #111 100%)',
-        pointerEvents: 'auto',
-        zIndex: 0
-      }}
-    >
-      <Scene controlsRef={controlsRef}  highlightColor={highlightColor} />
+    <div className="absolute inset-0 z-0">
+      <Scene
+        controlsRef={controlsRef}
+        highlightColor={highlightColor}
+      />
     </div>
   );
 }
