@@ -15,6 +15,39 @@ export default function Model({ highlightColor, controlsRef }) {
 
   const previousHighlight = useRef(null);
 
+
+
+
+  /* -------------------------------------------------------
+   🚀 INITIAL CAMERA POSITION (ON LOAD)
+------------------------------------------------------- */
+useEffect(() => {
+  if (!scene || !controlsRef?.current) return;
+
+  // Fit camera to entire model
+  const box = new THREE.Box3().setFromObject(scene);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+
+  // Move model to center (important)
+  scene.position.sub(center);
+
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fov = camera.fov * (Math.PI / 180);
+
+  let cameraZ = maxDim / (2 * Math.tan(fov / 2));
+  cameraZ *=  .6; // zoom-out factor
+
+  camera.position.set(0, maxDim * 0.4, cameraZ);
+  camera.near = maxDim / 100;
+  camera.far = maxDim * 10;
+  camera.updateProjectionMatrix();
+
+  // OrbitControls target
+  controlsRef.current.target.set(0, 0, 0);
+  controlsRef.current.update();
+}, [scene]);
+
   /* -------------------------------------------------------
      🔆 MATERIAL FIX (run once)
   ------------------------------------------------------- */

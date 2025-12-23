@@ -29,7 +29,15 @@ const barData = [
   { name: 'M', val: 40 }, { name: 'T', val: 70 }, { name: 'W', val: 50 },
   { name: 'T', val: 90 }, { name: 'F', val: 60 }, { name: 'S', val: 30 },
 ];
-
+const solarProductionData = [
+  { hour: '00', output: 0 },
+  { hour: '04', output: 5 },
+  { hour: '08', output: 45 },
+  { hour: '12', output: 92 },
+  { hour: '16', hour: 60 },
+  { hour: '20', output: 10 },
+  { hour: '24', output: 0 },
+];
 
 
 // --- STYLED COMPONENTS ---
@@ -126,17 +134,10 @@ export default function BeautifulDashboard() {
         <div className="w-80 flex flex-col gap-5 pointer-events-auto h-full">
           
           {/* LOGO CARD */}
-          <PanelCard className="p-6 bg-gradient-to-br from-blue-600/20 to-transparent border-blue-500/30">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500 rounded-lg shadow-[0_0_15px_rgba(59,130,246,0.6)]">
-                <LayoutGrid size={20} className="text-white" />
-              </div>
-              <h1 className="text-xl font-black tracking-tighter italic text-white">SYSTEM_NEXUS</h1>
-            </div>
-          </PanelCard>
+         
 
           {/* STATS FROM IMAGE REF */}
-          <MiniStatCard 
+          {/* <MiniStatCard 
             title="Core Intel" 
             value="68%" 
             trend="+2.3%" 
@@ -147,7 +148,7 @@ export default function BeautifulDashboard() {
     part: 'solar003',          // ✅ mesh name
     offset: { x: 5, y: 2, z: 5 } // ✅ camera offset
   }}
-          />
+          /> */}
 
           <PanelCard className="p-6"      onClick={() => {
       // clear then re-set so clicking the same target repeatedly works
@@ -170,64 +171,109 @@ export default function BeautifulDashboard() {
             </div>
           </PanelCard>
 {/* FOCUS CONTROLS */}
-<PanelCard className="p-5 pointer-events-auto">
-  <h3 className="text-[10px] uppercase tracking-widest text-slate-400 mb-4">
-    Camera Focus
-  </h3>
 
-  <button
-    onClick={() => {
+
+<div className="w-80 flex flex-col gap-5 pointer-events-auto h-full">
+  
+  {/* CORE INTEL STAT CARD (Already in your code) */}
+  <MiniStatCard 
+    title="Core Intel" 
+    value="68%" 
+    trend="+2.3%" 
+    icon={Cpu} 
+    colorClass="text-blue-400"
+    focusConfig={{
+      part: 'solar003',
+      offset: { x: 5, y: 2, z: 5 }
+    }}
+  />
+
+  {/* RESOURCE STACK (Already in your code) */}
+  {/* <PanelCard className="p-6"   onClick={() => {
       // clear then re-set so clicking the same target repeatedly works
       setFocusConfig(null); 
       setTimeout(() => setFocusConfig(
 
          {
-    part: 'solar003',
-    offset: { x: 5, y: 2, z: 5 }
+    part: 'solar004',
+    offset: { x: 5, y: 2, z: 10 }
   }
       ), 50);
-    }}
-    className="w-full py-2 rounded-xl bg-cyan-500/20 border border-cyan-400/40
-               text-cyan-300 text-xs font-bold tracking-widest
-               hover:bg-cyan-500/30 transition"
-  >
-    FOCUS GLASS MODULE
-  </button>
-</PanelCard>
+    }}>
+     <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 text-slate-500">Resource Stack</h3>
+     <div className="space-y-6">
+       <GlowingBar label="Neural Load" value={87} color="#3b82f6" />
+       <GlowingBar label="Memory Bank" value={63} color="#8b5cf6" />
+       <GlowingBar label="Active Nodes" value={45} color="#06b6d4" />
+     </div>
+  </PanelCard> */}
+
+  {/* NEW: SOLAR TELEMETRY GRAPHS */}
+  <PanelCard className="flex-1 p-6 flex flex-col">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-500">Solar Telemetry</h3>
+      <Zap size={14} className="text-amber-400 animate-pulse" />
+    </div>
+
+    {/* Small Area Chart for Real-time Output */}
+    <div className="h-32 w-full mb-6">
+       <p className="text-[9px] text-slate-500 mb-2 uppercase">Current Output (kW)</p>
+       <ResponsiveContainer width="100%" height="100%">
+         <AreaChart data={solarProductionData}>
+           <defs>
+             <linearGradient id="colorSolar" x1="0" y1="0" x2="0" y2="1">
+               <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.3}/>
+               <stop offset="95%" stopColor="#fbbf24" stopOpacity={0}/>
+             </linearGradient>
+           </defs>
+           <Area 
+             type="stepAfter" 
+             dataKey="output" 
+             stroke="#fbbf24" 
+             strokeWidth={2} 
+             fill="url(#colorSolar)" 
+             dot={false}
+           />
+         </AreaChart>
+       </ResponsiveContainer>
+    </div>
+
+    {/* Efficiency Bar Graph */}
+    <div className="flex-1">
+      <p className="text-[9px] text-slate-500 mb-2 uppercase">Peak Performance</p>
+      <div className="space-y-3">
+        {[
+          { label: 'Array A', val: 94, color: '#fbbf24' },
+          { label: 'Array B', val: 82, color: '#f59e0b' },
+          { label: 'Array C', val: 76, color: '#d97706' }
+        ].map((item, i) => (
+          <div key={i} className="flex items-end gap-2">
+            <span className="text-[8px] text-slate-400 w-12">{item.label}</span>
+            <div className="flex-1 h-3 bg-white/5 rounded-sm overflow-hidden flex items-center">
+              <div 
+                className="h-full transition-all duration-1000" 
+                style={{ width: `${item.val}%`, backgroundColor: item.color }}
+              />
+            </div>
+            <span className="text-[8px] text-white w-6">{item.val}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Live Status Ticker */}
+    <div className="mt-4 pt-4 border-t border-white/5">
+      <div className="flex items-center gap-2">
+        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+        <span className="text-[9px] font-mono text-emerald-500/80">GRID_FEED_ACTIVE: 4.2kWh</span>
+      </div>
+    </div>
+  </PanelCard>
+</div>
 
 
 
 
-
-
-{/* COLOR CONTROLS */}
-<PanelCard className="p-5 pointer-events-auto">
-  <h3 className="text-[10px] uppercase tracking-widest text-slate-400 mb-4">
-    Bike Color
-  </h3>
-
-  <div className="flex gap-3">
-    <button
-      onClick={() => setHighlightColor('#ef4444')}
-      className="w-6 h-6 rounded-full bg-red-500 ring-2 ring-white/20"
-    />
-
-    <button
-      onClick={() => setHighlightColor('#22c55e')}
-      className="w-6 h-6 rounded-full bg-green-500 ring-2 ring-white/20"
-    />
-
-    <button
-      onClick={() => setHighlightColor('#3b82f6')}
-      className="w-6 h-6 rounded-full bg-blue-500 ring-2 ring-white/20"
-    />
-
-    <button
-      onClick={() => setHighlightColor('#facc15')}
-      className="w-6 h-6 rounded-full bg-yellow-400 ring-2 ring-white/20"
-    />
-  </div>
-</PanelCard>
 
 
 

@@ -1,15 +1,10 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import Sidebar from "@/components/Sidebar";
-import { FocusProvider } from "@/context/FocusContext"; // ✅ ADD THIS
+import { FocusProvider } from "@/context/FocusContext";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-
-export const metadata = {
-  title: "SYSTEM_NEXUS",
-  description: "Advanced Dashboard OS",
-};
 
 export default function RootLayout({ children }) {
   return (
@@ -17,10 +12,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white overflow-x-hidden`}
       >
-        {/* ✅ CONTEXT PROVIDER WRAPS THE APP */}
         <FocusProvider>
-          <div className="flex h-screen w-full max-w-full overflow-hidden">
-            
+          <div className="flex h-screen w-full max-w-full overflow-hidden relative">
+
             {/* LEFT SIDEBAR */}
             <Sidebar />
 
@@ -28,6 +22,13 @@ export default function RootLayout({ children }) {
             <main className="flex-1 relative overflow-y-auto overflow-x-hidden bg-[#050505] min-w-0">
               {children}
             </main>
+
+            {/* RIGHT LOGO */}
+            <img
+              src="/logo.png"
+              alt="Logo"
+              className="fixed top-4 right-4 size-40 opacity-80 hover:opacity-100 transition z-50"
+            />
 
           </div>
         </FocusProvider>

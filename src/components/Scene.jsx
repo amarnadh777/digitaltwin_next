@@ -5,7 +5,7 @@ import { OrbitControls, Environment } from '@react-three/drei';
 import { Suspense } from 'react';
 import * as THREE from 'three';
 import Model from './Model';
-
+import Loader from './Loader';
 
 
 export default function Scene({ controlsRef, highlightColor }) {
@@ -52,7 +52,7 @@ export default function Scene({ controlsRef, highlightColor }) {
         color={highlightColor || '#00ffff'}
       />
 
-      <Suspense fallback={null}>
+      <Suspense fallback={<Loader/>}>
         <Model controlsRef={controlsRef} highlightColor={highlightColor} />
       </Suspense>
 
