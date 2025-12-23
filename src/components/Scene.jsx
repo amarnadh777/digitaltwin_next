@@ -6,6 +6,8 @@ import { Suspense } from 'react';
 import * as THREE from 'three';
 import Model from './Model';
 
+
+
 export default function Scene({ controlsRef, highlightColor }) {
   return (
     <Canvas

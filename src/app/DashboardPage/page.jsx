@@ -34,27 +34,64 @@ const barData = [
 
 // --- STYLED COMPONENTS ---
 
-const PanelCard = ({ children, className = "" }) => (
-  <div className={`bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] shadow-2xl overflow-hidden ${className}`}>
+const PanelCard = ({ children, className = "", onClick }) => (
+  <div
+    onClick={onClick}   // ✅ FORWARD CLICK
+    className={`
+      bg-[#0a0a0a]/80 backdrop-blur-xl
+      border border-white/5 rounded-[2rem]
+      shadow-2xl overflow-hidden
+      ${onClick ? 'cursor-pointer' : ''}
+      ${className}
+    `}
+  >
     {children}
   </div>
-);
+);  
 
+const MiniStatCard = ({
+  title,
+  value,
+  trend,
+  icon: Icon,
+  colorClass,
+  focusConfig,        // ✅ new prop
+}) => {
+  const { setFocusConfig } = useFocus();
 
-const MiniStatCard = ({ title, value, subValue, trend, icon: Icon, colorClass }) => (
-  <PanelCard className="p-5">
-    <div className="flex justify-between items-start">
-      <div>
-        <p className="text-[10px] text-slate-500 font-medium mb-1 uppercase tracking-widest">{title}</p>
-        <h2 className="text-2xl font-bold text-white tracking-tight">{value}</h2>
-        <p className={`text-[10px] mt-1 font-bold ${colorClass}`}>{trend}</p>
+  const handleClick = () => {
+    setFocusConfig(null);              // reset (important)
+    setTimeout(() => {
+      setFocusConfig(focusConfig);     // apply new focus
+    }, 50);
+  };
+
+  return (
+    <PanelCard
+      className="p-5 cursor-pointer hover:ring-2 hover:ring-cyan-400/40 transition"
+      onClick={handleClick}             // ✅ CLICK ENABLED
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-[10px] text-slate-500 uppercase tracking-widest">
+            {title}
+          </p>
+          <h2 className="text-2xl font-bold text-white">
+            {value}
+          </h2>
+          <p className={`text-[10px] font-bold ${colorClass}`}>
+            {trend}
+          </p>
+        </div>
+
+        <div className={`p-2 rounded-xl bg-white/5 border border-white/10 ${colorClass}`}>
+          <Icon size={18} />
+        </div>
       </div>
-      <div className={`p-2 rounded-xl bg-white/5 border border-white/10 ${colorClass}`}>
-        <Icon size={18} />
-      </div>
-    </div>
-  </PanelCard>
-);
+    </PanelCard>
+  );
+};
+
 
 const GlowingBar = ({ label, value, color }) => (
   <div className="space-y-2">
@@ -75,7 +112,7 @@ export default function BeautifulDashboard() {
 
   const [highlightColor, setHighlightColor] = useState('#ff0000');
 
-  const { setFocusPart } = useFocus();
+  const { setFocusConfig } = useFocus();
   return (
     <div className="relative w-screen h-screen bg-[#050505] overflow-hidden font-sans text-slate-200">
       {/* 3D BACKGROUND LAYER */}
@@ -105,9 +142,26 @@ export default function BeautifulDashboard() {
             trend="+2.3%" 
             icon={Cpu} 
             colorClass="text-blue-400"
+
+             focusConfig={{
+    part: 'solar003',          // ✅ mesh name
+    offset: { x: 5, y: 2, z: 5 } // ✅ camera offset
+  }}
           />
 
-          <PanelCard className="p-6">
+          <PanelCard className="p-6"      onClick={() => {
+      // clear then re-set so clicking the same target repeatedly works
+      setFocusConfig(null); 
+      setTimeout(() => setFocusConfig(
+
+         {
+    part: 'solar004',
+    offset: { x: 5, y: 2, z: 10 }
+  }
+      ), 50);
+    }}
+           
+       >
             <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6 text-slate-500">Resource Stack</h3>
             <div className="space-y-6">
               <GlowingBar label="Neural Load" value={87} color="#3b82f6" />
@@ -124,8 +178,14 @@ export default function BeautifulDashboard() {
   <button
     onClick={() => {
       // clear then re-set so clicking the same target repeatedly works
-      setFocusPart(null);
-      setTimeout(() => setFocusPart('solar003'), 50);
+      setFocusConfig(null); 
+      setTimeout(() => setFocusConfig(
+
+         {
+    part: 'solar003',
+    offset: { x: 5, y: 2, z: 5 }
+  }
+      ), 50);
     }}
     className="w-full py-2 rounded-xl bg-cyan-500/20 border border-cyan-400/40
                text-cyan-300 text-xs font-bold tracking-widest
@@ -192,10 +252,23 @@ export default function BeautifulDashboard() {
           <div className="flex gap-6 h-72 pointer-events-auto">
             
             {/* MAIN AREA CHART (Network Intelligence) */}
-            <PanelCard className="flex-[2] p-8">
+            <PanelCard className="flex-[2] p-8"  
+             onClick={() => {
+      // clear then re-set so clicking the same target repeatedly works
+      setFocusConfig(null); 
+      setTimeout(() => setFocusConfig(
+
+         {
+    part: 'building004',
+        offset: { x: 15, y: 5, z: 5 }
+  }
+      ), 50);
+    }}
+            
+            >
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Network Intelligence</h3>
+                  <h3 className="tex  t-xs font-bold uppercase tracking-widest text-slate-400">Network Intelligence</h3>
                   <p className="text-2xl font-bold text-white mt-1">$32,430 <span className="text-xs text-blue-400 ml-2">+11.5%</span></p>
                 </div>
                 <div className="p-2 bg-white/5 rounded-lg border border-white/10">
@@ -216,7 +289,20 @@ export default function BeautifulDashboard() {
             </PanelCard>
 
             {/* NEON BAR CHART (Thermal) */}
-            <PanelCard className="flex-1 p-8">
+            <PanelCard className="flex-1 p-8"
+            
+              onClick={() => {
+      // clear then re-set so clicking the same target repeatedly works
+      setFocusConfig(null); 
+      setTimeout(() => setFocusConfig(
+
+         {  
+    part: 'building002',
+        offset: { x: -2, y: 5, z:  8  }
+  }
+      ), 50);
+    }}
+            >
               <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">Thermal Gradient</h3>
               <ResponsiveContainer width="100%" height="70%">
                 <BarChart data={barData}>
